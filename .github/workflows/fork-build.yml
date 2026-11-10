@@ -1,0 +1,27 @@
+name: Fork build
+
+on:
+  push:
+    branches: [ci/fork-build]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.95.0
+      - name: Build ibcmd-rs
+        run: cargo build --release -p ibcmd-rs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ibcmd-rs-win64
+          path: target/release/ibcmd-rs.exe
+          if-no-files-found: error
